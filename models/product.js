@@ -5,7 +5,12 @@ import Joi, { number, ref } from "joi";
 
 const schema = Joi.object({
   productname: Joi.string().min(2).max(100).required(),
-  tag
+  tag:Joi.array().items(Joi.objectId()).unique(),
+  price:Joi.number().required(),
+  date:Joi.string().default(Date.now).required(),
+  category_ID:Joi.array().items(Joi.objectId()).required(),
+  size:Joi.string().required(),
+  about:Joi.string()
 });
 
 const productSchema = new Schema({
@@ -16,9 +21,8 @@ const productSchema = new Schema({
     require: true,
   },
   tag: [{
-    type: String,
-    minlengh: 3,
-    maxlengh: 50,
+    type: mongoose.type.objectId,
+    ref:"tags",
     require: true,
   }],
   price: {
@@ -31,16 +35,20 @@ const productSchema = new Schema({
     default:Date.now(),
   },
   category_ID: [{
-    type:mongoose.type.categoryID,
-    ref:category,
+    type:mongoose.type.objectId,
+    ref:"category",
     require: false,
   }],
-  size: {
-    type: String,
+  size: [{
+    type:String,
     require: true,
-  },
+  }],
   about: {
     type: String,
     require: false,
   },
 });
+
+const product = new model("productSchema",productSchema)
+
+export default {product , schema}
