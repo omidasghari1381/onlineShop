@@ -1,17 +1,30 @@
 //db
-import mongoose, { Schema, model } from "mongoose";
+import mongoose, { Schema, model, JoiBase } from "mongoose";
 //joi
 import Joi, { number, ref } from "joi";
+//updatedAt
+import product from "../middleware/updatedAt";
+//joi-objectid
+import joiObjectId from "joi-objectid";
+const Joi = JoiBase.extend(joiObjectId);
 
-const schema = Joi.object({
-  productname: Joi.string().min(2).max(100).required(),
-  tag:Joi.array().items(Joi.objectId()).unique(),
-  price:Joi.number().required(),
-  date:Joi.string().default(Date.now).required(),
-  category_ID:Joi.array().items(Joi.objectId()).required(),
-  size:Joi.string().required(),
-  about:Joi.string()
-});
+function productValidate(productSchema) {
+  const schema = Joi.object({
+    productname: Joi.string().min(2).max(100).required().trim(),
+    tag: Joi.array().items(Joi.objectId()).unique().required(),
+    price: Joi.number().required().min(0),
+    date: Joi.date().default(Date.now).required(),
+    updateAt: Joi.date().default(Date.now()),
+    stock: Joi.number().min(0).required(),
+    category_ID: Joi.array().items(Joi.objectId()).required(),
+    size: Joi.string()
+      .required()
+      .valid("XS", "S", "M", "L", "XL", "XXL", "XXXL"),
+    about: Joi.string(),
+    image: Joi.array().items(Joi.string()),
+  });
+  return schema.validate(productSchema);
+}
 
 const productSchema = new Schema({
   productname: {
@@ -19,36 +32,59 @@ const productSchema = new Schema({
     minlengh: 2,
     maxlengh: 100,
     require: true,
+    trim: true,
   },
-  tag: [{
-    type: mongoose.type.objectId,
-    ref:"tags",
-    require: true,
-  }],
+  tag: [
+    {
+      type: mongoose.Types.objectId,
+      ref: "tags",
+      require: true,
+      unique: true,
+    },
+  ],
   price: {
-    type: number,
+    type: Number,
     require: true,
+    min: 0,
   },
   date: {
     type: Date,
     require: true,
-    default:Date.now(),
+    default: Date.now(),
   },
-  category_ID: [{
-    type:mongoose.type.objectId,
-    ref:"category",
-    require: false,
-  }],
-  size: [{
-    type:String,
+  updateAt: {
+    type: Date,
+    default: Date.now(),
+  },
+  stock: {
+    type: Number,
     require: true,
-  }],
+    min: 0,
+  },
+  category_ID: [
+    {
+      type: mongoose.Types.objectId,
+      ref: "category",
+      require: false,
+    },
+  ],
+  sizes: {
+    type: [String],
+    enum: ["XS", "S", "M", "L", "XL", "XXL", "XXXL"],
+    require: true,
+  },
   about: {
     type: String,
     require: false,
   },
+  image: {
+    type: [String],
+    require: false,
+  },
 });
 
-const product = new model("productSchema",productSchema)
+productSchema.pre("save", product);
 
-export default {product , schema}
+const product = new model("productSchema", productSchema);
+
+export default { product, productValidate };

@@ -9,11 +9,12 @@ const tagsSchema = new Schema({
     minlengh: 3,
     maxlengh: 30,
     required: true,
+    trim:true,
   },
 });
 
 const schema = Joi.object({
-  name: Joi.string().max(30).min(3).required(),
+  name: Joi.string().max(30).min(3).required().trim(),
 });
 
 const tags = new model("tagsSchema", tagsSchema);
