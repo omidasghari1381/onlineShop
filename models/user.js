@@ -14,22 +14,22 @@ const complexityOption = {
   symbol: 1,
   requirementcount: 2,
 };
-function validateuser (userSchema){
-    const schema = Joi.object({
+function validateuser(userSchema) {
+  const schema = Joi.object({
     username: Joi.string().min(3).max(20).required(),
     email: Joi.string()
-        .min(3)
-        .max(320)
-        .required()
-        .pattern(
+      .min(3)
+      .max(320)
+      .required()
+      .pattern(
         /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
-        ),
+      ),
     password: passwordComplexity(complexityOption).required(),
-    });
-    return schema.validate(userSchema)
+  });
+  return schema.validate(userSchema);
 }
 
-const userSchema = new schema({
+const userSchema = new Schema({
   username: {
     type: String,
     minlengh: 3,
