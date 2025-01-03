@@ -1,9 +1,11 @@
 //usermodel
+import validateUser from "../models/user.js";
 import user from "../models/user.js";
-//userdatavalidation
-import schema from "../middleware/userdatavalidation.js";
+
 //bcrypt
 import bcrypt from "bcrypt";
+
+let validate = validateUser()
 
 async function hashPassword(password) {
   const salt = await bcrypt.genSalt(10);
@@ -12,11 +14,11 @@ async function hashPassword(password) {
 }
 
 async function register(req, res) {
-  const userValidation = schema.validate(req.body);
-  if (userValidation.error) {
+  const validateUser = validate.validate(req.body);
+  if (validateUser.error) {
     return res
       .status(401)
-      .send(userValidation.error.details.map((detail) => detail.message));
+      .send(validateUser.error.details.map((detail) => detail.message));
   }
   try {
     req.body.password = await hashPassword(req.body.password);

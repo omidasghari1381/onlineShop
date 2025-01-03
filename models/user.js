@@ -14,20 +14,7 @@ const complexityOption = {
   symbol: 1,
   requirementcount: 2,
 };
-function validateuser(userSchema) {
-  const schema = Joi.object({
-    username: Joi.string().min(3).max(20).required(),
-    email: Joi.string()
-      .min(3)
-      .max(320)
-      .required()
-      .pattern(
-        /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
-      ),
-    password: passwordComplexity(complexityOption).required(),
-  });
-  return schema.validate(userSchema);
-}
+
 
 const userSchema = new Schema({
   username: {
@@ -57,5 +44,20 @@ const userSchema = new Schema({
   },
 });
 
+export function validateUser(userSchema) {
+  const schema = Joi.object({
+    username: Joi.string().min(3).max(20).required(),
+    email: Joi.string()
+      .min(3)
+      .max(320)
+      .required()
+      .pattern(
+        /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+      ),
+    password: passwordComplexity(complexityOption).required(),
+  });
+  return schema.validate(userSchema);
+}
+
 const user = model("username", userSchema);
-export default { user, validateuser };
+export default user;

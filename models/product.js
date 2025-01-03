@@ -1,30 +1,19 @@
 //db
-import mongoose, { Schema, model, JoiBase } from "mongoose";
+import pkg from 'mongoose';
+const { Schema, model, JoiBase } = pkg;
 //joi
-import Joi, { number, ref } from "joi";
+import joipkg from 'joi';
+const { number, ref } = joipkg;
 //updatedAt
-import product from "../middleware/updatedAt";
+import product from "../middleware/updatedAtPro.js";
 //joi-objectid
 import joiObjectId from "joi-objectid";
-const Joi = JoiBase.extend(joiObjectId);
+//mongoose
+import mongoose from 'mongoose';
 
-function productValidate(productSchema) {
-  const schema = Joi.object({
-    productname: Joi.string().min(2).max(100).required().trim(),
-    tag: Joi.array().items(Joi.objectId()).unique().required(),
-    price: Joi.number().required().min(0),
-    date: Joi.date().default(Date.now).required(),
-    updateAt: Joi.date().default(Date.now()),
-    stock: Joi.number().min(0).required(),
-    category_ID: Joi.array().items(Joi.objectId()).required(),
-    size: Joi.string()
-      .required()
-      .valid("XS", "S", "M", "L", "XL", "XXL", "XXXL"),
-    about: Joi.string(),
-    image: Joi.array().items(Joi.string()),
-  });
-  return schema.validate(productSchema);
-}
+// const joi = JoiBase.extend(joiObjectId);
+
+
 
 const productSchema = new Schema({
   productname: {
@@ -36,7 +25,7 @@ const productSchema = new Schema({
   },
   tag: [
     {
-      type: mongoose.Types.objectId,
+      type: String,
       ref: "tags",
       require: true,
       unique: true,
@@ -49,7 +38,6 @@ const productSchema = new Schema({
   },
   date: {
     type: Date,
-    require: true,
     default: Date.now(),
   },
   updateAt: {
@@ -63,7 +51,7 @@ const productSchema = new Schema({
   },
   category_ID: [
     {
-      type: mongoose.Types.objectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "category",
       require: false,
     },
@@ -83,8 +71,25 @@ const productSchema = new Schema({
   },
 });
 
+export function productValidate(productSchema) {
+  const schema = joi.object({
+    productname: joi.string().min(2).max(100).required().trim(),
+    tag: joi.string.unique().required(),
+    price: joi.number().required().min(0),
+    date: joi.date().default(Date.now),
+    updateAt: joi.date().default(Date.now()),
+    stock: joi.number().min(0).required(),
+    category_ID: joi.array().items(joi.objectId()).required(),
+    size: joi.string()
+      .required()
+      .valid("XS", "S", "M", "L", "XL", "XXL", "XXXL"),
+    about: joi.string(),
+    image: joi.array().items(joi.string()),
+  });
+  return schema.validate(productSchema);
+}
+
 productSchema.pre("save", product);
 
-const product = new model("productSchema", productSchema);
-
-export default { product, productValidate };
+const productModel = model("product", productSchema);
+export default productModel;
