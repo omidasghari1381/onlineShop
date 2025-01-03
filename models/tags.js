@@ -1,21 +1,26 @@
 //db
 import { Schema, model } from "mongoose";
 //joi
-import Joi, { required } from "joi";
+import Joi from "joi";
 
 const tagsSchema = new Schema({
-  name: {
+  tagName: {
     type: String,
     minlengh: 3,
-    maxlengh: 30,
-    required: true,
-    trim:true,
-  },
+    maxlengh: 20,
+    require: true,
+    unique: true,
+    trim: true,
+  }
 });
 
-const schema = Joi.object({
-  name: Joi.string().max(30).min(3).required().trim(),
-});
+export function validateTags(tagsSchema) {
+  const schema = Joi.object({
+    tagName: Joi.string().min(3).max(30).required().unique()
+  });
+  return schema.validate(tagsSchema);
+}
 
-const tags = new model("tagsSchema", tagsSchema);
-export default { schema, tags };
+const tagsModel = model("tagsSchema", tagsSchema);
+
+export default tagsModel;

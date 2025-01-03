@@ -7,11 +7,13 @@ import checkUser from "../controllers/login.js";
 import register from "../controllers/register.js";
 //product
 import addProduct from "../controllers/product.js"
+//tags
+import tagsModel from "../controllers/tags.js";
 
 router.post("/register", register);
 router.post("/login", checkUser);
 router.post("/addproduct", addProduct);
-
+router.post("/addtag", tagsModel);
 
 
 export default router;

@@ -1,8 +1,8 @@
-import productValidate  from "../models/product.js";
+import validateProduct  from "../models/product.js";
 import productModel  from "../models/product.js";
 
 
-let validate = productValidate()
+let validate = validateProduct()
 
 
 async function addProduct(req, res) {

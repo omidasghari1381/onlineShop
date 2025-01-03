@@ -60,4 +60,5 @@ export function validateUser(userSchema) {
 }
 
 const user = model("username", userSchema);
+
 export default user;

@@ -1,19 +1,17 @@
 //db
-import pkg from 'mongoose';
+import pkg from "mongoose";
 const { Schema, model, JoiBase } = pkg;
 //joi
-import joipkg from 'joi';
+import joipkg from "joi";
 const { number, ref } = joipkg;
 //updatedAt
 import product from "../middleware/updatedAtPro.js";
 //joi-objectid
 import joiObjectId from "joi-objectid";
 //mongoose
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 // const joi = JoiBase.extend(joiObjectId);
-
-
 
 const productSchema = new Schema({
   productname: {
@@ -23,14 +21,11 @@ const productSchema = new Schema({
     require: true,
     trim: true,
   },
-  tag: [
-    {
-      type: String,
-      ref: "tags",
-      require: true,
-      unique: true,
-    },
-  ],
+  tag: {
+    require: true,
+    type: [String],
+    // ref: "tags",
+  },
   price: {
     type: Number,
     require: true,
@@ -71,16 +66,17 @@ const productSchema = new Schema({
   },
 });
 
-export function productValidate(productSchema) {
+export function validateProduct(productSchema) {
   const schema = joi.object({
     productname: joi.string().min(2).max(100).required().trim(),
-    tag: joi.string.unique().required(),
+    tag: joi.string.required(),
     price: joi.number().required().min(0),
     date: joi.date().default(Date.now),
     updateAt: joi.date().default(Date.now()),
     stock: joi.number().min(0).required(),
     category_ID: joi.array().items(joi.objectId()).required(),
-    size: joi.string()
+    size: joi
+      .string()
       .required()
       .valid("XS", "S", "M", "L", "XL", "XXL", "XXXL"),
     about: joi.string(),
