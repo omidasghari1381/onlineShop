@@ -40,7 +40,7 @@ const userSchema = new Schema({
   },
   role: {
     type: String,
-    require: true,
+    default:"client"
   },
 });
 
@@ -55,6 +55,7 @@ export function validateUser(userSchema) {
         /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
       ),
     password: passwordComplexity(complexityOption).required(),
+    role: Joi.string().default("client")
   });
   return schema.validate(userSchema);
 }
