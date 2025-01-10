@@ -1,38 +1,36 @@
 //db
-import mongoose, { Schema, model, JoiBase } from "mongoose";
+import mongoose, { Schema, model} from "mongoose";
 //joi
-import Joi, { boolean, number } from "joi";
-//updatedAt
-import basket from "../middleware/updatedAt";
+import joipkg from "joi";
+const { number, ref } = joipkg;
 //joi-objectid
 import joiObjectId from "joi-objectid";
-const Joi = JoiBase.extend(joiObjectId);
+// const Joi = JoiBase.extend(joiObjectId);
 
-function basketValidate(basketSchema) {
-  const Schema = Joi.object({
-    userId: Joi.objectId().required(),
-    items: Joi.array().items(
-      Joi.object({
-        productId: Joi.objectId().required(),
-        quantity: Joi.number().integer().min(1).required(),
-        price: Joi.number().min(0).required(),
+export function validateBasket(basketSchema) {
+  const Schema = joi.object({
+    userId: joi.objectId().required(),
+    items: joi.array().items(
+      joi.object({
+        productId: joi.objectId().required(),
+        quantity: joi.number().integer().min(1).required(),
       })
     ),
-    totalPrice: Joi.number().min(0).required(),
+    bstatus : joi.boolean().default(false)
   });
   return Schema
 }
 
 const basketSchema = new Schema({
   userId: {
-    type: mongoose.Typse.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "user",
     require: true,
   },
   items: [
     {
       productId: {
-        type: mongoose.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "product",
         require: true,
       },
@@ -48,15 +46,13 @@ const basketSchema = new Schema({
       },
     },
   ],
-  sumprice: {
+  totalPrice: {
     type: Number,
-    require: true,
     default: 0,
   },
   bStatus: {
-    type: boolean,
+    type: Boolean,
     default: false,
-    require: true,
   },
   createdAt: {
     type: Date,
@@ -68,6 +64,6 @@ const basketSchema = new Schema({
   },
 });
 
-const basket = new model("basketSchema", basketSchema);
+const basket = model("basket", basketSchema);
 
-export default { basket, basketValidate };
+export default basket

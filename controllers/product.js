@@ -10,7 +10,7 @@ async function addProduct(req, res) {
   if (validateProduct.error) {
     return res
       .status(401)
-      .send(validateProduct .error.details.map((detail) => detail.message));
+      .send(validateProduct.error.details.map((detail) => detail.message));
   }
   try {
     const newProduct = new productModel(req.body);

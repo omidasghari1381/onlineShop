@@ -1,9 +1,7 @@
 import validateTags  from "../models/tags.js";
 import tagsModel  from "../models/tags.js";
 
-
 let validate = validateTags()
-
 
 async function addTag(req, res) {
   const validateTags = validate.validate(req.body);

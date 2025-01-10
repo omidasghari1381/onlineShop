@@ -21,6 +21,6 @@ export function validateTags(tagsSchema) {
   return schema.validate(tagsSchema);
 }
 
-const tagsModel = model("tagsSchema", tagsSchema);
+const tagsModel = model("tags", tagsSchema);
 
 export default tagsModel;

@@ -4,18 +4,21 @@ import { Schema, model } from "mongoose";
 import Joi from "joi";
 
 const categorySchema = new Schema({
-  name: {
+  categoryName: {
     type: String,
     minlengh: 3,
     maxlengh: 30,
-    required: true,
-    trim:true,
+    require: true,
+    trim: true,
+    unique:true,
   },
 });
 
-const schema = Joi.object({
-  name: Joi.string().max(30).min(3).required().trim(),
-});
-
-const category = new model("categorySchema", categorySchema);
-export default { schema, tags };
+export function validateCategory(categorySchema) {
+  const schema = Joi.object({
+    categoryName: Joi.string().max(30).min(3).required().unique(),
+  });
+  return schema.validate(categorySchema);
+}
+const categoryModel = model("category", categorySchema);
+export default categoryModel;

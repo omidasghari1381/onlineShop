@@ -1,5 +1,5 @@
 const basket = (next) => {
-  this.sumprice = this.items.reduce(
+  this.totalPrice = this.items.reduce(
     (total, item) => total + item.quantity * item.price,
     0
   );

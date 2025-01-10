@@ -1,5 +1,3 @@
-//usermodel
-import user from "../models/user.js";
 //JWT
 import jwt from "jsonwebtoken";
 //.env
@@ -14,7 +12,6 @@ function auth(req, res, next) {
   jwt.verify(token, process.env.PASSWORD_HASH_KEY, (err, decoded) => {
     if (err) return res.status(401).send("Unauthorized");
     req.userId = decoded;
-    console.log(req.userId)
     next();
   });
 }
