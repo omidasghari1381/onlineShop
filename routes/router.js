@@ -15,9 +15,8 @@ import addCategory from "../controllers/category.js"
 import auth from "../middleware/auth.js";
 //isAdmin
 import isAdmin from "../middleware/isAdmin.js";
-//addToCart
-import addToCart from "../controllers/basket.js"
-
+//basket
+import {addToCart ,removeFromCart} from "../controllers/basket.js"
 
 
 router.post("/register", register);
@@ -26,6 +25,7 @@ router.post("/addproduct", auth, isAdmin, addProduct);
 router.post("/addtag", auth, isAdmin, addTag);
 router.post("/addcategory", auth, isAdmin, addCategory);
 router.post("/addtocart", auth, addToCart);
+router.post("/removefromcart", auth, removeFromCart);
 
 
 

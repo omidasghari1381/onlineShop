@@ -1,13 +1,9 @@
 //basket
 import basket from "../models/basket.js";
-//validateBasket
-import validateBasket from "../models/basket.js";
 //product
 import productModel from "../models/product.js";
 
-let validate = validateBasket();
-
-async function addToCart(req, res) {
+export async function addToCart(req, res) {
   const productId = req.body.productId;
   const quantity = req.body.quantity;
   try {
@@ -22,7 +18,7 @@ async function addToCart(req, res) {
     }
     // پیدا کردن یا ایجاد سبد خرید کاربر
     let cart = await basket.findOne({ userId: req.userId.id });
-    if(cart){
+    if (cart) {
       if (cart.items.quantity > product.stock) {
         return res.status(400).json({ message: "insufficient inventory" });
       }
@@ -30,11 +26,9 @@ async function addToCart(req, res) {
     if (!cart) {
       cart = new basket({
         userId: req.userId.id,
-        items:[],
+        items: [],
       });
-
     }
-
 
     // بررسی اینکه آیا محصول در سبد وجود دارد یا نه
     const existingItem = cart.items.find(
@@ -67,21 +61,23 @@ async function addToCart(req, res) {
 
 // حذف آیتم از سبد خرید
 export async function removeFromCart(req, res) {
-  const productId = req.params;
-
+  const productId = req.body.productId;
   try {
-    const basket = await basket.findOne({ user: req.userId });
-    if (!basket) {
+    const cart = await basket.findOne({ userId: req.body.userId });
+    console.log(cart);
+
+    if (!cart) {
       return res.status(404).json({ message: "couldn't find the basket" });
     }
 
-    basket.items = basket.items.filter(
-      (item) => item.productModel.toString() !== productId
+    cart.items = cart.items.filter(
+      (item) => item.productId.toString() !== productId
     );
-    await basket.save();
+    console.log(cart);
+    await cart.save();
     res
       .status(200)
-      .json({ message: "product got removed from basket", cart: basket });
+      .json({ message: "product got removed from basket", cart: cart });
   } catch (error) {
     res.status(500).json({ message: "something went wrong 2", error });
   }
@@ -150,4 +146,3 @@ export async function clearCart(req, res) {
   }
 }
 
-export default addToCart;
