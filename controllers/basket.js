@@ -7,16 +7,13 @@ export async function addToCart(req, res) {
   const productId = req.body.productId;
   const quantity = req.body.quantity;
   try {
-    // بررسی وجود محصول
     const product = await productModel.findById(productId);
     if (!product) {
       return res.status(404).json({ message: "couldn't find the product" });
     }
-    // بررسی موجودی محصول
     if (product.stock < quantity) {
       return res.status(400).json({ message: "insufficient inventory" });
     }
-    // پیدا کردن یا ایجاد سبد خرید کاربر
     let cart = await basket.findOne({ userId: req.userId.id });
     if (cart) {
       if (cart.items.quantity > product.stock) {
@@ -30,7 +27,6 @@ export async function addToCart(req, res) {
       });
     }
 
-    // بررسی اینکه آیا محصول در سبد وجود دارد یا نه
     const existingItem = cart.items.find(
       (item) => item.productId.toString() === productId
     );
@@ -51,7 +47,6 @@ export async function addToCart(req, res) {
       }
     }
 
-    // ذخیره سبد خرید
     await cart.save();
     res.status(200).json({ message: "product added to basket", basket: cart });
   } catch (error) {
@@ -59,7 +54,6 @@ export async function addToCart(req, res) {
   }
 }
 
-// حذف آیتم از سبد خرید
 export async function removeFromCart(req, res) {
   const productId = req.body.productId;
   try {
@@ -85,13 +79,14 @@ export async function removeFromCart(req, res) {
 
 export async function viewCart(req, res) {
   try {
-    const basket = await basket
-      .findOne({ user: req.userId })
-      .populate("items.product");
-    if (!basket) {
-      return res.status(404).json({ message: "basket is empty" });
+    const cart = await basket
+      .findOne({ userId: req.body.userId })
+      .populate("items.productId");
+    console.log(cart)
+    if (!cart) {
+      return res.status(404).json({ message: "cart is empty" });
     }
-    res.status(200).json(basket);
+    res.status(200).json(cart);
   } catch (error) {
     res.status(500).json({ message: "something went wrong 3", error });
   }
