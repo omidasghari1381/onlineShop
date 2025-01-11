@@ -16,7 +16,8 @@ export function validateBasket(basketSchema) {
         quantity: joi.number().integer().min(1).required(),
       })
     ),
-    bstatus : joi.boolean().default(false)
+    bstatus : joi.boolean().default(false),
+    totalPrice:joi.number().default(0)
   });
   return Schema
 }
