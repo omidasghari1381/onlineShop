@@ -16,7 +16,13 @@ import auth from "../middleware/auth.js";
 //isAdmin
 import isAdmin from "../middleware/isAdmin.js";
 //basket
-import { addToCart, removeFromCart, viewCart } from "../controllers/basket.js";
+import {
+  addToCart,
+  removeFromCart,
+  viewCart,
+  updateQuantity,
+  clearCart,
+} from "../controllers/basket.js";
 
 router.post("/register", register);
 router.post("/login", checkUser);
@@ -26,5 +32,9 @@ router.post("/addcategory", auth, isAdmin, addCategory);
 router.post("/addtocart", auth, addToCart);
 router.post("/removefromcart", auth, removeFromCart);
 router.post("/viewcart", auth, viewCart);
+router.post("/updatequantity", auth, updateQuantity);
+router.post("/clearcart", auth, clearCart);
+
+
 
 export default router;

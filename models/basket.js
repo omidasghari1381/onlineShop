@@ -1,11 +1,10 @@
 //db
-import mongoose, { Schema, model} from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 //joi
 import joipkg from "joi";
 const { number, ref } = joipkg;
-//joi-objectid
-import joiObjectId from "joi-objectid";
-// const Joi = JoiBase.extend(joiObjectId);
+
+
 
 export function validateBasket(basketSchema) {
   const Schema = joi.object({
@@ -16,10 +15,10 @@ export function validateBasket(basketSchema) {
         quantity: joi.number().integer().min(1).required(),
       })
     ),
-    bstatus : joi.boolean().default(false),
-    totalPrice:joi.number().default(0)
+    bstatus: joi.boolean().default(false),
+    totalPrice: joi.number().default(0),
   });
-  return Schema
+  return Schema;
 }
 
 const basketSchema = new Schema({
@@ -45,6 +44,10 @@ const basketSchema = new Schema({
         require: true,
         default: 0,
       },
+      sumPrice: {
+        type: Number,
+        default: 0,
+      },
     },
   ],
   totalPrice: {
@@ -65,6 +68,18 @@ const basketSchema = new Schema({
   },
 });
 
+basketSchema.pre("save", function (next) {
+  this.items.forEach((item) => {
+    item.sumPrice = item.price * item.quantity;
+  });
+  this.totalPrice = 0;
+  this.items.forEach((item) => {
+    this.totalPrice += item.sumPrice;
+  });
+  next();
+});
+
+
 const basket = model("basket", basketSchema);
 
-export default basket
+export default basket;
